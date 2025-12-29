@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <h1 style="text-align: center;"> DSI/OCIO/CPE WORKFLOW</h1>
+{% endblock %}
+
+{% block body %}
+
+  <div class="content">
+    {% if tasks | length < 1 %}
+    <h4 style="text-align: center;"> There are no tasks. Create one below ! </h4>
+    {% else %}
+    <table class="center-table">
+        <tr>
+            <th style="color: white; background-color: black;">BACKLOG</th>
+            <th style="color: white; background-color: orange;">TO DO</th>
+            <th style="color: white; background-color: blue;">IN PROGRESS</th>
+            <th style="color: white; background-color: green;">DONE</th>
+            <th style="color: white; background-color: black;">VALIDATED</th>
+        </tr>
+        <tr>
+          {% for column in ['BACKLOG','TODO','IN_PROGRESS','DONE','VALIDATED'] %}
+            <td>
+              {% for task in tasks if task.status == column %}
+                <div class="task-card">
+                  <b>{{ task.content }}</b><br>
+                  <b>{{ task.date_created.strftime('%Y-%m-%d %H:%M') }}</b><br>
+                  <!-- Update -->                
+                  <a href="/update/{{task.id}}">✏️</a>
+                  <!-- Delete -->
+                  <a href="/delete/{{task.id}}">❌</a>
+                </div>
+                <hr>
+              {% endfor %} 
+            </td>
+          {% endfor %}
+        </tr>
+      </table>
+      {% endif %}
+      <!-- Add -->
+      <form method="POST" action="/" class="form">
+      <input type="text" name="content" id="content" placeholder="New task" required>
+
+      <select name="status" required>
+        <option value="BACKLOG">BACKLOG</option>
+        <option value="TODO">TO DO</option>
+        <option value="IN_PROGRESS">IN PROGRESS</option>
+        <option value="DONE">DONE</option>
+        <option value="VALIDATED">VALIDATED</option>
+      </select>
+      <button type="submit">➕</button>
+      </form>
+  </div>
+{% endblock %}

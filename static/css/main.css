@@ -1,0 +1,55 @@
+body, html {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: lightblue;
+}
+
+.content {
+    margin-left: auto;  /* Centre la marge gauche */
+    margin-right: auto; /* Centre la marge droite */
+    width: 100%;         /* Optionnel : donne une largeur pour mieux voir */
+    border-collapse: collapse; /* Optionnel : pour une meilleure apparence */
+}
+
+table, td, th {
+    border: 1px solid #aaa;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    height: 30px;
+}
+
+td {
+    text-align: center;
+    padding: 5px;
+}
+
+.form {
+  display: flex;
+  justify-content: center; /* Centre horizontalement */
+  align-items: center;     /* Centre verticalement */
+  min-height: 100vh;    
+}
+
+#content {
+    width: 70%;
+}
+
+.center-table {
+    margin-left: auto;  /* Centre la marge gauche */
+    margin-right: auto; /* Centre la marge droite */
+    width: 100%;         /* Optionnel : donne une largeur pour mieux voir */
+    border-collapse: collapse; /* Optionnel : pour une meilleure apparence */
+}
+
+/* Si vous voulez centrer le texte dans les cellules */
+.center-table th, .center-table td {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Task Master</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Update Task</h1>
+        <form action="/update/{{task.id}}" method="POST" class="form">
+            <input type="text" name="content" id="content" value="{{task.content}}" required>
+
+            <select name="status" required>
+                <option value="BACKLOG">BACKLOG</option>
+                <option value="TODO">TO DO</option>
+                <option value="IN_PROGRESS">IN PROGRESS</option>
+                <option value="DONE">DONE</option>
+                <option value="VALIDATED">VALIDATED</option>
+            </select>
+            <button type="submit">✏️</button>
+        </form>
+</div>
+{% endblock %}
