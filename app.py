@@ -59,6 +59,9 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+with app.app_context():
+    db.create_all()
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -76,9 +79,6 @@ def logout():
     logout_user()
     return redirect('/login')
 
-
-with app.app_context():
-    db.create_all()
 
 @app.route('/signup', methods=['POST'])
 
