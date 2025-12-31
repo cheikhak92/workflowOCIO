@@ -28,6 +28,8 @@ db = SQLAlchemy(app)
 app.app_context().push()
 
 class User(db.Model, UserMixin):
+    __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
@@ -42,12 +44,14 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password_hash, password)
 
 class Todo(db.Model):
+    __tablename__ = 'todo'
+
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     status = db.Column(db.String(20), nullable=False, default='BACKLOG')
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):
         return '<Task %r>' % self.id
