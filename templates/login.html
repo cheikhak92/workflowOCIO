@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Task User</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Connexion</h1>
+    <div class="form">
+        <form method="POST" action="/login">
+            <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            <button type="submit">Connexion</button>
+        </form> 
+    </div>
+    <hr>
+    <h1 style="text-align: center">Créer un compte</h1>
+    <div class="form">    
+        <form method="POST" action="/signup">
+            <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+            <input type="password" name="password" placeholder="Mot de passe" required>
+            <button type="submit">Créer un compte</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul style="color: red;">
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}

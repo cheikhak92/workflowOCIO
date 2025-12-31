@@ -2,6 +2,28 @@
 
 {% block head %}
   <h1 style="text-align: center;"> DSI/OCIO/CPE WORKFLOW</h1>
+  <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:20px;">
+      <div style="margin-bottom:20px; display:flex; gap:10px;">
+          <!-- Bouton gestion utilisateurs -->
+          {% if current_user.is_admin %}
+            <a href="{{ url_for('users') }}">
+                <button type="button">👥 Utilisateurs</button>
+            </a>
+          {% endif %}
+      </div>
+
+    <div>
+        Connecté en tant que : <strong>{{ current_user.username }}</strong>
+    </div>
+    <div>
+        <a href="{{ url_for('logout') }}" title="Se déconnecter"> 
+          <img src="{{ url_for('static', filename='images/logout.png') }}" 
+                 alt="Logout" 
+                 style="width:24px; height:24px;">
+                 Se déconnecter
+        </a>
+    </div>
+  </div>
 {% endblock %}
 
 {% block body %}
