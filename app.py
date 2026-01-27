@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -8,8 +8,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask import flash
 
+from flask import send_file, url_for
+
+from processing import process_txt_to_csv, allowed_file, generate_filename
+
 
 app = Flask(__name__)
+
+UPLOAD_FOLDER = "/tmp/uploads"
+OUTPUT_FOLDER = "/tmp/outputs"
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
 
 app.config['SECRET_KEY'] = 'workflow-ocio-secret-key-2025'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -27,6 +38,14 @@ else:
 db = SQLAlchemy(app)
 app.app_context().push()
 
+class ProcessedFile(db.Model):
+    __tablename__ = "processed_file"
+
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
@@ -35,7 +54,12 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    tasks = db.relationship('Todo', backref='user', lazy=True)
+    tasks = db.relationship(
+        'Todo',
+        backref='user',
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -66,6 +90,71 @@ def load_user(user_id):
 with app.app_context():
     db.create_all()
 
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    files = ProcessedFile.query.filter_by(user_id=current_user.id).all()
+    return render_template("dashboard.html", files=files)
+
+@app.route("/traitement", methods=["GET", "POST"])
+@login_required
+def traitement():
+
+    if request.method == "POST":
+        file = request.files.get("file")
+
+        if not file or file.filename == "":
+            flash("Aucun fichier sélectionné", "error")
+            return redirect(request.url)
+
+        if not allowed_file(file.filename):
+            flash("Format non autorisé", "error")
+            return redirect(request.url)
+
+        input_path = os.path.join(UPLOAD_FOLDER, "input.txt")
+
+        filename = generate_filename()
+        output_path = os.path.join(OUTPUT_FOLDER, filename)
+
+        file.save(input_path)
+
+        process_txt_to_csv(input_path, output_path)
+
+        # Sauvegarde en base si tu utilises ProcessedFile
+        pf = ProcessedFile(
+            filename=filename,
+            user_id=current_user.id
+        )
+        db.session.add(pf)
+        db.session.commit()
+
+        return redirect(url_for("dashboard"))
+
+    return render_template("upload.html")
+
+@app.route("/download/<filename>" )
+@login_required
+def download(filename):
+
+    processed = ProcessedFile.query.filter_by(
+        filename=filename,
+        user_id=current_user.id
+    ).first()
+
+    if not processed:
+        return "Accès refusé", 403
+        
+    file_path = os.path.join(OUTPUT_FOLDER, filename)
+    
+    if not os.path.exists(file_path):
+        return "Fichier introuvable", 404
+
+    return send_file(
+        file_path,
+        as_attachment=True,
+        download_name=filename
+    )
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -85,7 +174,6 @@ def logout():
 
 
 @app.route('/signup', methods=['POST'])
-
 def signup():
     username = request.form['username']
     password = request.form['password']
@@ -194,21 +282,27 @@ def index():
 
 
 @app.route('/delete/<int:id>')
-
+@login_required
 def delete(id):
-    task_to_delete = Todo.query.get_or_404(id)
+    task = Todo.query.get_or_404(id)
 
+    if task.user_id != current_user.id:
+        return "Accès refusé", 403
+    
     try:
-        db.session.delete(task_to_delete)
+        db.session.delete(task)
         db.session.commit()
         return redirect('/')
     except:
-        return 'There was a problem deleting that task'
-
+            return 'There was a problem deleting that task'
+    
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
-
+@login_required
 def update(id):
     task = Todo.query.get_or_404(id)
+
+    if task.user_id != current_user.id:
+        return "Accès refusé", 403
 
     if request.method == 'POST':
         task.content = request.form['content']

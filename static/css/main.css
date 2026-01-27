@@ -53,3 +53,9 @@ td {
     padding: 8px;
     border: 1px solid #ddd;
 }
+
+.conteneur {
+  display: flex;
+  justify-content: center; /* Centre horizontalement */
+  /*align-items: center;      Centre verticalement */
+}

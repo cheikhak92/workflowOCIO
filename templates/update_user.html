@@ -1,28 +1,30 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>List des Utilisateurs</title>
+<title>Modifier un Utilisateur</title>
+    <h2 style="text-align: center;">Modifier utilisateur</h2>
+    <div>
+        <a href="/users"><button>⬅ Retour</button></a>
+    </div>
 {% endblock %}
 
 {% block body %}
 <div class="content">
-    <h2>Modifier utilisateur</h2>
-
-    <form method="POST">
-        <label>Nom d'utilisateur</label><br>
-        <input type="text" name="username" value="{{ user.username }}" required><br><br>
-        <label>Nouveau mot de passe</label><br>
-        <input type="password" name="password" placeholder="Nouveau mot de passe (optionnel)"><br><br>
-        {% if current_user.is_admin %}
-            <label>
-                <input type="checkbox" name="is_admin"
-                    {% if user.is_admin %}checked{% endif %}>
-                Administrateur
-            </label><br><br>
-        {% endif %}
-        <button type="submit">Mettre à jour</button>
-    </form>
-
-    <a href="/users">⬅ Retour</a>
+    <div class="form">
+        <form method="POST">
+            <label>Nom d'utilisateur</label><br>
+            <input type="text" name="username" value="{{ user.username }}" required><br><br>
+            <label>Nouveau mot de passe</label><br>
+            <input type="password" name="password" placeholder="Nouveau mot de passe (optionnel)"><br><br>
+            {% if current_user.is_admin %}
+                <label>
+                    <input type="checkbox" name="is_admin"
+                        {% if user.is_admin %}checked{% endif %}>
+                    Administrateur
+                </label><br><br>
+            {% endif %}
+            <button type="submit">Mettre à jour</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

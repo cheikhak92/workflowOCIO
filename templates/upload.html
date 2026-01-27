@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Traitement TXT </title>    
+{% endblock %}
+
+{% block body %}
+    <div class="content">
+        <h2 style="text-align: center">Traitement de fichier TXT</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <!-- Élément à GAUCHE -->
+            <a href="/"><button>⬅ Retour</button></a>
+            <!-- Élément à DROITE -->
+            <a href="{{ url_for('dashboard') }}">
+                <button style="margin-left:10px;">
+                    📄 Dashboard
+                </button>
+            </a>
+        </div>
+        <form method="POST" enctype="multipart/form-data" class="form">
+            <input type="file" name="file" accept=".txt,.csv" required>
+            <br><br>
+            <button type="submit">📤 Uploader et traiter</button>
+        </form>
+    </div>
+{% endblock %}

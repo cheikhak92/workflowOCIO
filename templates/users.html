@@ -2,23 +2,27 @@
 
 {% block head %}
 <title>List des Utilisateurs</title>
-    <!-- Bouton modifier mon profil -->
-    <a href="{{ url_for('update_user', id=current_user.id) }}">
-        <button type="button">⚙️ Mon profil</button>
-    </a>
+    <h2 style="text-align: center;">Liste des utilisateurs</h2>
+    <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:20px;">
+       <div>
+            <a href="/"><button>⬅ Retour</button></a>
+       </div>
+    </div>
+    
 {% endblock %}
 
 {% block body %}
 <div class="content">
-    <h2>Liste des utilisateurs</h2>
     <table border="1" cellpadding="10">
         <tr>
             <th>Username</th>
+            <th>Is Admin</th>
             <th>Actions</th>
         </tr>
         {% for user in users %}
         <tr>
             <td>{{ user.username }}</td>
+            <td>{{user.is_admin}}</td>
             <td>
                 <a href="{{ url_for('update_user', id=user.id) }}">✏️</a>
                 <a href="{{ url_for('delete_user', id=user.id) }}"
@@ -27,6 +31,5 @@
         </tr>
         {% endfor %}
     </table>
-    <a href="/">⬅ Retour</a>
 </div>
 {% endblock %}

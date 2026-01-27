@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block head %}
+<title> Dashboard </title>    
+{% endblock %}
+
+{% block body %}
+    <div class="content">
+        <h2 style="text-align: center">Traitement de fichier TXT</h2>
+        <div>
+            <a href="/"><button>⬅ Retour</button></a>
+            <table>
+                <tr>
+                    <th>Fichier</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+
+                {% for f in files %}
+                <tr>
+                    <td>{{ f.filename }}</td>
+                    <td>{{ f.created_at }}</td>
+                    <td>
+                    <a href="{{ url_for('download', filename=f.filename) }}">
+                        Télécharger
+                    </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <a href="{{ url_for('traitement') }}"><button>➕ Nouveau traitement</button></a>
+        </div>
+    </div>
+{% endblock %}
